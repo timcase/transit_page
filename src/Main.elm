@@ -1,10 +1,13 @@
 module Main exposing (Model, Msg(..), Page(..), init, main, subscriptions, update, view)
 
-import Browser
+import Browser exposing (UrlRequest)
+import Browser.Navigation as Navigation
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Main.Route as Route exposing (Route)
 import Transit exposing (Step(..))
+import Url exposing (Url)
 
 
 type alias Model =
@@ -14,20 +17,26 @@ type alias Model =
 type Page
     = Page1
     | Page2
+    | Page3
+    | Page4
+    | Page5
+    | Page6
 
 
 type Msg
     = Click Page
     | SetPage Page
     | TransitMsg (Transit.Msg Msg)
+    | ClickedLink UrlRequest
+    | SetRoute (Maybe Route)
 
 
 type alias Flags =
     {}
 
 
-init : Flags -> ( Model, Cmd Msg )
-init _ =
+init : Flags -> Url -> Navigation.Key -> ( Model, Cmd Msg )
+init flags url navKey =
     ( { page = Page1, transition = Transit.empty }, Cmd.none )
 
 
@@ -38,14 +47,13 @@ update msg model =
             Transit.start TransitMsg (SetPage page) ( 600, 600 ) model
 
         SetPage page ->
-            let
-                _ =
-                    Debug.log "page" page
-            in
             ( { model | page = page }, Cmd.none )
 
         TransitMsg transitMsg ->
             Transit.tick TransitMsg transitMsg model
+
+        _ ->
+            ( model, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -148,84 +156,6 @@ view model =
         ]
 
 
-
--- view : Model -> Html Msg
--- view model =
---     div [ class "pt-perspective", id "pt-main" ]
---         [ div [] [ text "hello world" ]
---         , div [ class "pt-page pt-page-1" ]
---             [ h1 []
---                 [ span []
---                     [ text "A collection of" ]
---                 , strong []
---                     [ text "Page" ]
---                 , text "Transitions"
---                 ]
---             ]
---         , div [ class "pt-page pt-page-2 pt-page-current" ]
---             [ h1 []
---                 [ span []
---                     [ text "A collection of" ]
---                 , strong []
---                     [ text "Page" ]
---                 , text "Transitions"
---                 ]
---             ]
---         , div [ class "pt-page pt-page-3" ]
---             [ h1 []
---                 [ span []
---                     [ text "A collection of" ]
---                 , strong []
---                     [ text "Page" ]
---                 , text "Transitions"
---                 ]
---             ]
---         , div [ class "pt-page pt-page-4" ]
---             [ h1 []
---                 [ span []
---                     [ text "A collection of" ]
---                 , strong []
---                     [ text "Page" ]
---                 , text "Transitions"
---                 ]
---             ]
---         , div [ class "pt-page pt-page-5" ]
---             [ h1 []
---                 [ span []
---                     [ text "A collection of" ]
---                 , strong []
---                     [ text "Page" ]
---                 , text "Transitions"
---                 ]
---             ]
---         , div [ class "pt-page pt-page-6" ]
---             [ h1 []
---                 [ span []
---                     [ text "A collection of" ]
---                 , strong []
---                     [ text "Page" ]
---                 , text "Transitions"
---                 ]
---             ]
---         ]
--- view : Model -> Html Msg
--- view model =
---     div []
---         [ nav []
---             [ a [ onClick (Click Page1) ] [ text "To page 1" ]
---             , a [ onClick (Click Page2) ] [ text "To page 2" ]
---             ]
---         , div
---             []
---             [ p
---                 [ style "opacity" (String.fromFloat (Transit.getValue model.transition)) ]
---                 [ text (pageToString model.page) ]
---             , p [] [ text (stepToString (Transit.getStep model.transition)) ]
---             , p [] [ text (String.fromFloat (Transit.getValue model.transition)) ]
---             ]
---         ]
-
-
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Transit.subscriptions TransitMsg model
@@ -233,15 +163,17 @@ subscriptions model =
 
 main : Program Flags Model Msg
 main =
-    Browser.document
+    Browser.application
         { init = init
         , update = update
         , view =
             \m ->
-                { title = "Elm 0.19 starter"
+                { title = "Transit demo"
                 , body = [ view m ]
                 }
         , subscriptions = subscriptions
+        , onUrlChange = Route.match >> SetRoute
+        , onUrlRequest = ClickedLink
         }
 
 
@@ -270,3 +202,15 @@ pageToString page =
 
         Page2 ->
             "Page2"
+
+        Page3 ->
+            "Page3"
+
+        Page4 ->
+            "Page4"
+
+        Page5 ->
+            "Page5"
+
+        Page6 ->
+            "Page 6"
