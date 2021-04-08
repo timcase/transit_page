@@ -1,4 +1,4 @@
-module Page.Page exposing (Page(..))
+module Page.Page exposing (Page(..), PageState(..))
 
 
 type Page
@@ -8,3 +8,9 @@ type Page
     | Page4
     | Page5
     | Page6
+
+
+type PageState
+    = Current
+    | Incoming
+    | Outgoing

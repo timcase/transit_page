@@ -6,7 +6,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Main.Route as Route exposing (Route)
-import Page.Page exposing (Page(..))
+import Page.Page exposing (Page(..), PageState(..))
 import Page.Page1
 import Page.Page2
 import Page.Page3
@@ -19,7 +19,11 @@ import Url exposing (Url)
 
 
 type alias Model =
-    Transit.WithTransition { page : Maybe Page, outgoingPage : Maybe Page, incomingPage : Maybe Page }
+    Transit.WithTransition
+        { page : Maybe Page
+        , outgoingPage : Maybe Page
+        , incomingPage : Maybe Page
+        }
 
 
 type Msg
@@ -37,7 +41,13 @@ type alias Flags =
 
 init : Flags -> Url -> Navigation.Key -> ( Model, Cmd Msg )
 init flags url navKey =
-    ( { page = Just Page1, outgoingPage = Nothing, incomingPage = Nothing, transition = Transit.empty }, Cmd.none )
+    ( { page = Just Page1
+      , outgoingPage = Nothing
+      , incomingPage = Nothing
+      , transition = Transit.empty
+      }
+    , Cmd.none
+    )
 
 
 setRoute : Maybe Route -> Model -> ( Model, Cmd Msg )
@@ -97,14 +107,14 @@ update msg model =
             ( model, Cmd.none )
 
 
-viewPage : Maybe Page -> Step -> Html msg
-viewPage page step =
+viewPage : Maybe Page -> Step -> PageState -> Html msg
+viewPage page step state =
     case page of
         Just Page1 ->
-            Page.Page1.view Page1 step
+            Page.Page1.view Page1 step state
 
         Just Page2 ->
-            Page.Page2.view Page2 step
+            Page.Page2.view Page2 step state
 
         Just Page3 ->
             Page.Page3.view
@@ -133,13 +143,25 @@ view model =
     in
     div [ class "body" ]
         [ div [ class "pt-triggers" ]
-            [ button [ onClick (Click Page1), class "pt-touch-button", id "iterateEffects" ]
+            [ button
+                [ onClick (Click Page1)
+                , class "pt-touch-button"
+                , id "iterateEffects"
+                ]
                 [ text "To Page 1" ]
-            , button [ onClick (Click Page2), class "pt-touch-button", id "iterateEffects" ]
+            , button
+                [ onClick (Click Page2)
+                , class "pt-touch-button"
+                , id "iterateEffects"
+                ]
                 [ text "To Page 2" ]
             , text (stepToString (Transit.getStep model.transition))
             ]
-        , div [ class "pt-perspective", id "pt-main" ] [ viewPage page step, viewPage incomingPage step, viewPage outgoingPage step ]
+        , div [ class "pt-perspective", id "pt-main" ]
+            [ viewPage page step Current
+            , viewPage incomingPage step Incoming
+            , viewPage outgoingPage step Outgoing
+            ]
         , div [ class "pt-message" ]
             [ p []
                 [ text "Your browser does not support CSS animations." ]

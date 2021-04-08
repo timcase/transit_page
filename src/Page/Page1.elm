@@ -1,23 +1,19 @@
-Html.map Msg (module Page.Page1 exposing (view)
+module Page.Page1 exposing (view)
 
 import Html exposing (Html, div, h1, span, strong, text)
 import Html.Attributes as Html exposing (class, classList)
-import Page.Page exposing TaskItemMsg
+import Page.Page exposing (Page(..), PageState(..))
 import Transit exposing (Step(..))
 
-)
-view : Page -> Step -> Html msg
-view page step =
-    | TaskItemMsg TaskItem.Msg
+
+view : Page -> Step -> PageState -> Html msg
+view page step state =
     div
         [ class "pt-page pt-page-1"
         , classList
-            [ ( "pt-page-current"
-              , page == Page1
-              )
-            , ( "pt-page-current", page == Page2 && step == Exit )
-            , ( "pt-page-moveToLeft", page == Page1 && step == Exit )
-            , ( "pt-page-moveFromLeft", page == Page2 && step == Exit )
+            [ ( "pt-page-current", page == Page1 )
+            , ( "pt-page-moveFromLeft", page == Page1 && step == Exit && state == Incoming )
+            , ( "pt-page-moveToLeft", page == Page1 && step == Exit && state == Outgoing )
             ]
         ]
         [ h1 []
@@ -28,7 +24,3 @@ view page step =
             , text "Transition 1"
             ]
         ]
-        let _= Debug.log "taskItemmsg" "made ithere"
-        in
-    TaskItemMsg subMsg ->
-        ( model, Cmd.none )
