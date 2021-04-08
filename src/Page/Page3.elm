@@ -10,7 +10,7 @@ view =
         [ class "pt-page pt-page-3"
         , classList
             [ ( "pt-page-current"
-              , False
+              , True
               )
             ]
         ]

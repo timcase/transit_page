@@ -1,4 +1,4 @@
-module Main exposing (Model, Msg(..), Page(..), init, main, subscriptions, update, view)
+module Main exposing (Model, Msg(..), init, main, subscriptions, update, view)
 
 import Browser exposing (UrlRequest)
 import Browser.Navigation as Navigation
@@ -6,21 +6,20 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Main.Route as Route exposing (Route)
+import Page.Page exposing (Page(..))
+import Page.Page1
+import Page.Page2
+import Page.Page3
+import Page.Page4
+import Page.Page5
+import Page.Page6
 import Transit exposing (Step(..))
+import Update.Extra exposing (andThen)
 import Url exposing (Url)
 
 
 type alias Model =
-    Transit.WithTransition { page : Page }
-
-
-type Page
-    = Page1
-    | Page2
-    | Page3
-    | Page4
-    | Page5
-    | Page6
+    Transit.WithTransition { page : Maybe Page, outgoingPage : Maybe Page, incomingPage : Maybe Page }
 
 
 type Msg
@@ -29,6 +28,7 @@ type Msg
     | TransitMsg (Transit.Msg Msg)
     | ClickedLink UrlRequest
     | SetRoute (Maybe Route)
+    | StartTransit Page
 
 
 type alias Flags =
@@ -37,17 +37,58 @@ type alias Flags =
 
 init : Flags -> Url -> Navigation.Key -> ( Model, Cmd Msg )
 init flags url navKey =
-    ( { page = Page1, transition = Transit.empty }, Cmd.none )
+    ( { page = Just Page1, outgoingPage = Nothing, incomingPage = Nothing, transition = Transit.empty }, Cmd.none )
+
+
+setRoute : Maybe Route -> Model -> ( Model, Cmd Msg )
+setRoute maybeRoute model =
+    case maybeRoute of
+        Nothing ->
+            ( model, Cmd.none )
+
+        Just Route.Page1 ->
+            ( { model | page = Just Page1 }, Cmd.none )
+
+        Just Route.Page2 ->
+            ( { model | page = Just Page2 }, Cmd.none )
+
+        Just Route.Page3 ->
+            ( { model | page = Just Page3 }, Cmd.none )
+
+        Just Route.Page4 ->
+            ( { model | page = Just Page4 }, Cmd.none )
+
+        Just Route.Page5 ->
+            ( { model | page = Just Page5 }, Cmd.none )
+
+        Just Route.Page6 ->
+            ( { model | page = Just Page6 }, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Click page ->
+        StartTransit page ->
             Transit.start TransitMsg (SetPage page) ( 600, 600 ) model
 
+        Click page ->
+            ( { model
+                | page = Nothing
+                , incomingPage = Just page
+                , outgoingPage = model.page
+              }
+            , Cmd.none
+            )
+                |> andThen update (StartTransit page)
+
         SetPage page ->
-            ( { model | page = page }, Cmd.none )
+            ( { model
+                | page = Just page
+                , incomingPage = Nothing
+                , outgoingPage = Nothing
+              }
+            , Cmd.none
+            )
 
         TransitMsg transitMsg ->
             Transit.tick TransitMsg transitMsg model
@@ -56,8 +97,40 @@ update msg model =
             ( model, Cmd.none )
 
 
+viewPage : Maybe Page -> Step -> Html msg
+viewPage page step =
+    case page of
+        Just Page1 ->
+            Page.Page1.view Page1 step
+
+        Just Page2 ->
+            Page.Page2.view Page2 step
+
+        Just Page3 ->
+            Page.Page3.view
+
+        Just Page4 ->
+            Page.Page4.view
+
+        Just Page5 ->
+            Page.Page5.view
+
+        Just Page6 ->
+            Page.Page6.view
+
+        Nothing ->
+            span [] []
+
+
 view : Model -> Html Msg
 view model =
+    let
+        { page, incomingPage, outgoingPage } =
+            model
+
+        step =
+            Transit.getStep model.transition
+    in
     div [ class "body" ]
         [ div [ class "pt-triggers" ]
             [ button [ onClick (Click Page1), class "pt-touch-button", id "iterateEffects" ]
@@ -66,80 +139,7 @@ view model =
                 [ text "To Page 2" ]
             , text (stepToString (Transit.getStep model.transition))
             ]
-        , div [ class "pt-perspective", id "pt-main" ]
-            [ div
-                [ class "pt-page pt-page-1"
-                , classList
-                    [ ( "pt-page-current"
-                      , model.page == Page1
-                      )
-                    , ( "pt-page-current", model.page == Page2 && Transit.getStep model.transition == Exit )
-                    , ( "pt-page-moveToLeft", model.page == Page1 && Transit.getStep model.transition == Exit )
-                    , ( "pt-page-moveFromLeft", model.page == Page2 && Transit.getStep model.transition == Exit )
-                    ]
-                ]
-                [ h1 []
-                    [ span []
-                        [ text "A collection of" ]
-                    , strong []
-                        [ text "Page" ]
-                    , text "Transition 1"
-                    ]
-                ]
-            , div
-                [ class "pt-page pt-page-2"
-                , classList
-                    [ ( "pt-page-current", model.page == Page2 )
-                    , ( "pt-page-current", model.page == Page1 && Transit.getStep model.transition == Exit )
-                    , ( "pt-page-moveFromRight", model.page == Page1 && Transit.getStep model.transition == Exit )
-                    , ( "pt-page-moveToRight", model.page == Page2 && Transit.getStep model.transition == Exit )
-                    ]
-                ]
-                [ h1 []
-                    [ span []
-                        [ text "A collection of" ]
-                    , strong []
-                        [ text "Page" ]
-                    , text "Transition 2"
-                    ]
-                ]
-            , div [ class "pt-page pt-page-3" ]
-                [ h1 []
-                    [ span []
-                        [ text "A collection of" ]
-                    , strong []
-                        [ text "Page" ]
-                    , text "Transitions"
-                    ]
-                ]
-            , div [ class "pt-page pt-page-4" ]
-                [ h1 []
-                    [ span []
-                        [ text "A collection of" ]
-                    , strong []
-                        [ text "Page" ]
-                    , text "Transitions"
-                    ]
-                ]
-            , div [ class "pt-page pt-page-5" ]
-                [ h1 []
-                    [ span []
-                        [ text "A collection of" ]
-                    , strong []
-                        [ text "Page" ]
-                    , text "Transitions"
-                    ]
-                ]
-            , div [ class "pt-page pt-page-6" ]
-                [ h1 []
-                    [ span []
-                        [ text "A collection of" ]
-                    , strong []
-                        [ text "Page" ]
-                    , text "Transitions"
-                    ]
-                ]
-            ]
+        , div [ class "pt-perspective", id "pt-main" ] [ viewPage page step, viewPage incomingPage step, viewPage outgoingPage step ]
         , div [ class "pt-message" ]
             [ p []
                 [ text "Your browser does not support CSS animations." ]
