@@ -6,7 +6,13 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Main.Route as Route exposing (Route)
-import Page.Page exposing (Page(..), PageState(..))
+import Page.Page
+    exposing
+        ( Direction(..)
+        , Page(..)
+        , PageState(..)
+        , pageDirection
+        )
 import Page.Page1
 import Page.Page2
 import Page.Page3
@@ -50,29 +56,34 @@ init flags url navKey =
     )
 
 
-setRoute : Maybe Route -> Model -> ( Model, Cmd Msg )
-setRoute maybeRoute model =
-    case maybeRoute of
-        Nothing ->
-            ( model, Cmd.none )
 
-        Just Route.Page1 ->
-            ( { model | page = Just Page1 }, Cmd.none )
-
-        Just Route.Page2 ->
-            ( { model | page = Just Page2 }, Cmd.none )
-
-        Just Route.Page3 ->
-            ( { model | page = Just Page3 }, Cmd.none )
-
-        Just Route.Page4 ->
-            ( { model | page = Just Page4 }, Cmd.none )
-
-        Just Route.Page5 ->
-            ( { model | page = Just Page5 }, Cmd.none )
-
-        Just Route.Page6 ->
-            ( { model | page = Just Page6 }, Cmd.none )
+--setRoute : Maybe Route -> Model -> ( Model, Cmd Msg )
+--setRoute maybeRoute model =
+--    case maybeRoute of
+--        Nothing ->
+--            ( model, Cmd.none )
+--        Just Route.Page1 ->
+--            --forward or back
+--            ( { model | page = Just Page1 }, Cmd.none )
+--        Just Route.Page2 ->
+--            ( { model | page = Just Page2 }, Cmd.none )
+--        Just Route.Page3 ->
+--            ( { model | page = Just Page3 }, Cmd.none )
+--        Just Route.Page4 ->
+--            ( { model | page = Just Page4 }, Cmd.none )
+--        Just Route.Page5 ->
+--            ( { model | page = Just Page5 }, Cmd.none )
+--        Just Route.Page6 ->
+--            ( { model | page = Just Page6 }, Cmd.none )
+-- page 1 page 2
+-- page 1 is outgoing page direction is forward
+-- page 2 is incoming page direction is forward
+-- page 2 page 1
+-- page 2 is outgoing page direciton is backwar
+-- page 1 is incoming page direciton is backward
+-- page 2 page 3
+-- page 2 is outgoing page direction is forward
+-- page 3 is incomig page direction is forward
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -107,26 +118,26 @@ update msg model =
             ( model, Cmd.none )
 
 
-viewPage : Maybe Page -> Step -> PageState -> Html msg
-viewPage page step state =
+viewPage : Maybe Page -> Step -> PageState -> Direction -> Html Msg
+viewPage page step state direction =
     case page of
         Just Page1 ->
-            Page.Page1.view Page1 step state
+            Page.Page1.view Page1 step state Click direction
 
         Just Page2 ->
-            Page.Page2.view Page2 step state
+            Page.Page2.view Page2 step state Click direction
 
         Just Page3 ->
-            Page.Page3.view
+            Page.Page3.view Page3 step state Click direction
 
         Just Page4 ->
-            Page.Page4.view
+            Page.Page4.view Page4 step state Click direction
 
         Just Page5 ->
-            Page.Page5.view
+            Page.Page5.view Page5 step state Click direction
 
         Just Page6 ->
-            Page.Page6.view
+            Page.Page6.view Page6 step state Click direction
 
         Nothing ->
             span [] []
@@ -143,38 +154,13 @@ view model =
     in
     div [ class "body" ]
         [ div [ class "pt-triggers" ]
-            [ button
-                [ onClick (Click Page1)
-                , class "pt-touch-button"
-                , id "iterateEffects"
-                ]
-                [ text "To Page 1" ]
-            , button
-                [ onClick (Click Page2)
-                , class "pt-touch-button"
-                , id "iterateEffects"
-                ]
-                [ text "To Page 2" ]
-            , text (stepToString (Transit.getStep model.transition))
+            [ text (stepToString (Transit.getStep model.transition))
             ]
         , div [ class "pt-perspective", id "pt-main" ]
-            [ viewPage page step Current
-            , viewPage incomingPage step Incoming
-            , viewPage outgoingPage step Outgoing
+            [ viewPage page step Current None
+            , viewPage incomingPage step Incoming (pageDirection incomingPage outgoingPage)
+            , viewPage outgoingPage step Outgoing (pageDirection incomingPage outgoingPage)
             ]
-        , div [ class "pt-message" ]
-            [ p []
-                [ text "Your browser does not support CSS animations." ]
-            ]
-        , node "script"
-            [ src "https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ]
-            []
-        , node "script"
-            [ src "js/jquery.dlmenu.js" ]
-            []
-        , node "script"
-            [ src "js/pagetransitions.js" ]
-            []
         ]
 
 
