@@ -3,7 +3,10 @@ module Page.Page exposing
     , Page(..)
     , PageState(..)
     , pageDirection
+    , routeToPage
     )
+
+import Main.Route as Route exposing (Route)
 
 
 type Page
@@ -25,6 +28,28 @@ type Direction
     = Forward
     | Backward
     | None
+
+
+routeToPage : Route -> Page
+routeToPage route =
+    case route of
+        Route.Page1 ->
+            Page1
+
+        Route.Page2 ->
+            Page2
+
+        Route.Page3 ->
+            Page3
+
+        Route.Page4 ->
+            Page4
+
+        Route.Page5 ->
+            Page5
+
+        Route.Page6 ->
+            Page6
 
 
 pageDirection : Maybe Page -> Maybe Page -> Direction

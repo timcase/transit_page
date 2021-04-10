@@ -12,6 +12,7 @@ import Page.Page
         , Page(..)
         , PageState(..)
         , pageDirection
+        , routeToPage
         )
 import Page.Page1
 import Page.Page2
@@ -29,6 +30,7 @@ type alias Model =
         { page : Maybe Page
         , outgoingPage : Maybe Page
         , incomingPage : Maybe Page
+        , navKey : Navigation.Key
         }
 
 
@@ -39,6 +41,8 @@ type Msg
     | ClickedLink UrlRequest
     | SetRoute (Maybe Route)
     | StartTransit Page
+    | GoTo Route
+    | GoBack
 
 
 type alias Flags =
@@ -47,43 +51,40 @@ type alias Flags =
 
 init : Flags -> Url -> Navigation.Key -> ( Model, Cmd Msg )
 init flags url navKey =
-    ( { page = Just Page1
-      , outgoingPage = Nothing
-      , incomingPage = Nothing
-      , transition = Transit.empty
-      }
-    , Cmd.none
-    )
+    setRoute
+        (Route.match url)
+        { page = Just Page1
+        , outgoingPage = Nothing
+        , incomingPage = Nothing
+        , transition = Transit.empty
+        , navKey = navKey
+        }
 
 
+setRoute : Maybe Route -> Model -> ( Model, Cmd Msg )
+setRoute maybeRoute model =
+    case maybeRoute of
+        Nothing ->
+            ( model, Cmd.none )
 
---setRoute : Maybe Route -> Model -> ( Model, Cmd Msg )
---setRoute maybeRoute model =
---    case maybeRoute of
---        Nothing ->
---            ( model, Cmd.none )
---        Just Route.Page1 ->
---            --forward or back
---            ( { model | page = Just Page1 }, Cmd.none )
---        Just Route.Page2 ->
---            ( { model | page = Just Page2 }, Cmd.none )
---        Just Route.Page3 ->
---            ( { model | page = Just Page3 }, Cmd.none )
---        Just Route.Page4 ->
---            ( { model | page = Just Page4 }, Cmd.none )
---        Just Route.Page5 ->
---            ( { model | page = Just Page5 }, Cmd.none )
---        Just Route.Page6 ->
---            ( { model | page = Just Page6 }, Cmd.none )
--- page 1 page 2
--- page 1 is outgoing page direction is forward
--- page 2 is incoming page direction is forward
--- page 2 page 1
--- page 2 is outgoing page direciton is backwar
--- page 1 is incoming page direciton is backward
--- page 2 page 3
--- page 2 is outgoing page direction is forward
--- page 3 is incomig page direction is forward
+        Just Route.Page1 ->
+            --forward or back
+            ( { model | page = Just Page1 }, Cmd.none )
+
+        Just Route.Page2 ->
+            ( { model | page = Just Page2 }, Cmd.none )
+
+        Just Route.Page3 ->
+            ( { model | page = Just Page3 }, Cmd.none )
+
+        Just Route.Page4 ->
+            ( { model | page = Just Page4 }, Cmd.none )
+
+        Just Route.Page5 ->
+            ( { model | page = Just Page5 }, Cmd.none )
+
+        Just Route.Page6 ->
+            ( { model | page = Just Page6 }, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -99,6 +100,20 @@ update msg model =
                 , outgoingPage = model.page
               }
             , Cmd.none
+            )
+                |> andThen update (StartTransit page)
+
+        GoTo route ->
+            let
+                page =
+                    routeToPage route
+            in
+            ( { model
+                | page = Nothing
+                , incomingPage = Just page
+                , outgoingPage = model.page
+              }
+            , Route.newUrl model.navKey route
             )
                 |> andThen update (StartTransit page)
 
@@ -122,22 +137,22 @@ viewPage : Maybe Page -> Step -> PageState -> Direction -> Html Msg
 viewPage page step state direction =
     case page of
         Just Page1 ->
-            Page.Page1.view Page1 step state Click direction
+            Page.Page1.view Page1 step state GoTo direction
 
         Just Page2 ->
-            Page.Page2.view Page2 step state Click direction
+            Page.Page2.view Page2 step state GoTo direction
 
         Just Page3 ->
-            Page.Page3.view Page3 step state Click direction
+            Page.Page3.view Page3 step state GoTo direction
 
         Just Page4 ->
-            Page.Page4.view Page4 step state Click direction
+            Page.Page4.view Page4 step state GoTo direction
 
         Just Page5 ->
-            Page.Page5.view Page5 step state Click direction
+            Page.Page5.view Page5 step state GoTo direction
 
         Just Page6 ->
-            Page.Page6.view Page6 step state Click direction
+            Page.Page6.view Page6 step state GoTo direction
 
         Nothing ->
             span [] []

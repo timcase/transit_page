@@ -3,21 +3,22 @@ module Page.Page4 exposing (view)
 import Html exposing (Html, button, div, h1, span, strong, text)
 import Html.Attributes as Html exposing (class, classList)
 import Html.Events as Events exposing (onClick)
+import Main.Route as Route exposing (Route)
 import Page.Page exposing (Direction(..), Page(..), PageState(..))
 import Transit exposing (Step(..))
 
 
-view : Page -> Step -> PageState -> (Page -> msg) -> Direction -> Html msg
+view : Page -> Step -> PageState -> (Route -> msg) -> Direction -> Html msg
 view page step state clickMsg direction =
     div []
         [ div [ class "pt-triggers" ]
             [ button
-                [ onClick (clickMsg Page3)
+                [ onClick (clickMsg Route.Page3)
                 , class "pt-touch-button"
                 ]
                 [ text "Go back" ]
             , button
-                [ onClick (clickMsg Page5)
+                [ onClick (clickMsg Route.Page5)
                 , class "pt-touch-button"
                 ]
                 [ text "Go Forward" ]
