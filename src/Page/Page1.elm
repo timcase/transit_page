@@ -10,6 +10,18 @@ import Transit exposing (Step(..))
 
 view : Page -> Step -> PageState -> (Route -> m) -> Direction -> Html m
 view page step state clickMsg direction =
+    let
+        -- _ =
+        --     Debug.log "page" page
+        _ =
+            Debug.log "step" step
+
+        _ =
+            Debug.log "state" state
+
+        _ =
+            Debug.log "direction" direction
+    in
     div []
         [ div [ class "pt-triggers" ]
             [ button
@@ -23,10 +35,10 @@ view page step state clickMsg direction =
             , classList
                 [ ( "pt-page-current", page == Page1 )
                 , ( "pt-page-moveFromLeft"
-                  , page == Page1 && step == Exit && state == Incoming && direction == Backward
+                  , step == Exit && state == Incoming && direction == Backward
                   )
                 , ( "pt-page-moveToLeft"
-                  , page == Page1 && step == Exit && state == Outgoing && direction == Forward
+                  , step == Exit && state == Outgoing && direction == Forward
                   )
                 ]
             ]

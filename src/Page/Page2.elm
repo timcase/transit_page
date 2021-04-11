@@ -28,23 +28,16 @@ view page step state clickMsg direction =
             , classList
                 [ ( "pt-page-current", page == Page2 )
                 , ( "pt-page-moveFromRight"
-                  , page
-                        == Page2
-                        && step
-                        == Exit
-                        && state
-                        == Incoming
-                        && direction
-                        == Forward
+                  , step == Exit && state == Incoming && direction == Forward
                   )
                 , ( "pt-page-moveToRight"
-                  , page == Page2 && step == Exit && state == Outgoing && direction == Backward
+                  , step == Exit && state == Outgoing && direction == Backward
                   )
                 , ( "pt-page-moveFromLeft"
-                  , page == Page2 && step == Exit && state == Incoming && direction == Backward
+                  , step == Exit && state == Incoming && direction == Backward
                   )
                 , ( "pt-page-moveToLeft"
-                  , page == Page2 && step == Exit && state == Outgoing && direction == Forward
+                  , step == Exit && state == Outgoing && direction == Forward
                   )
                 ]
             ]
