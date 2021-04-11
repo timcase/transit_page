@@ -4,7 +4,13 @@ import Html exposing (Html, button, div, h1, span, strong, text)
 import Html.Attributes as Html exposing (class, classList)
 import Html.Events as Events exposing (onClick)
 import Main.Route as Route exposing (Route)
-import Page.Page exposing (Direction(..), Page(..), PageState(..))
+import Page.Page
+    exposing
+        ( Direction(..)
+        , Page(..)
+        , PageState(..)
+        , animationClass
+        )
 import Transit exposing (Step(..))
 
 
@@ -25,25 +31,7 @@ view page step state clickMsg direction =
             ]
         , div
             [ class "pt-page pt-page-5 pt-page-current"
-            , classList
-                [ ( "pt-page-moveFromRight"
-                  , step
-                        == Exit
-                        && state
-                        == Incoming
-                        && direction
-                        == Forward
-                  )
-                , ( "pt-page-moveToRight"
-                  , step == Exit && state == Outgoing && direction == Backward
-                  )
-                , ( "pt-page-moveFromLeft"
-                  , step == Exit && state == Incoming && direction == Backward
-                  )
-                , ( "pt-page-moveToLeft"
-                  , step == Exit && state == Outgoing && direction == Forward
-                  )
-                ]
+            , animationClass step state direction
             ]
             [ h1 []
                 [ span []

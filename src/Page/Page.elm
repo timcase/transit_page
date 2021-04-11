@@ -2,11 +2,15 @@ module Page.Page exposing
     ( Direction(..)
     , Page(..)
     , PageState(..)
+    , animationClass
     , pageDirection
     , routeToPage
     )
 
+import Html exposing (Attribute)
+import Html.Attributes as Html exposing (class)
 import Main.Route as Route exposing (Route)
+import Transit exposing (Step(..))
 
 
 type Page
@@ -87,3 +91,26 @@ pageDirection incomingPage outgoingPage =
 
         ( _, _ ) ->
             None
+
+
+animationClass : Step -> PageState -> Direction -> Attribute msg
+animationClass step pageState direction =
+    let
+        transition =
+            ( step, pageState, direction )
+    in
+    case transition of
+        ( Exit, Incoming, Forward ) ->
+            class "pt-page-moveFromRight"
+
+        ( Exit, Outgoing, Backward ) ->
+            class "pt-page-moveToRight"
+
+        ( Exit, Incoming, Backward ) ->
+            class "pt-page-moveFromLeft"
+
+        ( Exit, Outgoing, Forward ) ->
+            class "pt-page-moveToLeft"
+
+        ( _, _, _ ) ->
+            class ""
