@@ -19,10 +19,9 @@ view page step state clickMsg direction =
                 [ text "Go back" ]
             ]
         , div
-            [ class "pt-page pt-page-6"
+            [ class "pt-page pt-page-6 pt-page-current"
             , classList
-                [ ( "pt-page-current", page == Page6 )
-                , ( "pt-page-moveFromRight"
+                [ ( "pt-page-moveFromRight"
                   , step
                         == Exit
                         && state

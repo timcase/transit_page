@@ -24,10 +24,9 @@ view page step state clickMsg direction =
                 [ text "Go Forward" ]
             ]
         , div
-            [ class "pt-page pt-page-5"
+            [ class "pt-page pt-page-5 pt-page-current"
             , classList
-                [ ( "pt-page-current", page == Page5 )
-                , ( "pt-page-moveFromRight"
+                [ ( "pt-page-moveFromRight"
                   , step
                         == Exit
                         && state
