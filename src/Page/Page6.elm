@@ -6,16 +6,14 @@ import Html.Events as Events exposing (onClick)
 import Main.Route as Route exposing (Route)
 import Page.Page
     exposing
-        ( Direction(..)
-        , Page(..)
-        , PageState(..)
+        ( Transition
         , animationClass
         )
 import Transit exposing (Step(..))
 
 
-view : Page -> Step -> PageState -> (Route -> msg) -> Direction -> Html msg
-view page step state clickMsg direction =
+view : (Route -> msg) -> Transition -> Html msg
+view clickMsg transition =
     div []
         [ div [ class "pt-triggers" ]
             [ button
@@ -26,7 +24,7 @@ view page step state clickMsg direction =
             ]
         , div
             [ class "pt-page pt-page-6 pt-page-current"
-            , animationClass step state direction
+            , animationClass transition
             ]
             [ h1 []
                 [ span []

@@ -6,11 +6,12 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Main.Route as Route exposing (Route)
-import Page.Page
+import Page.Page as Page
     exposing
         ( Direction(..)
         , Page(..)
         , PageState(..)
+        , Transition(..)
         , pageDirection
         , routeToPage
         )
@@ -135,24 +136,28 @@ update msg model =
 
 viewPage : Maybe Page -> Step -> PageState -> Direction -> Html Msg
 viewPage page step state direction =
+    let
+        transition =
+            Transition step state direction
+    in
     case page of
         Just Page1 ->
-            Page.Page1.view Page1 step state GoTo direction
+            Page.Page1.view GoTo transition
 
         Just Page2 ->
-            Page.Page2.view Page2 step state GoTo direction
+            Page.Page2.view GoTo transition
 
         Just Page3 ->
-            Page.Page3.view Page3 step state GoTo direction
+            Page.Page3.view GoTo transition
 
         Just Page4 ->
-            Page.Page4.view Page4 step state GoTo direction
+            Page.Page4.view GoTo transition
 
         Just Page5 ->
-            Page.Page5.view Page5 step state GoTo direction
+            Page.Page5.view GoTo transition
 
         Just Page6 ->
-            Page.Page6.view Page6 step state GoTo direction
+            Page.Page6.view GoTo transition
 
         Nothing ->
             span [] []
