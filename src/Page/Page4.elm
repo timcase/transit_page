@@ -17,15 +17,15 @@ view clickMsg transition =
     div []
         [ div [ class "pt-triggers" ]
             [ button
-                [ onClick (clickMsg Route.Page3)
-                , class "pt-touch-button"
-                ]
-                [ text "Go back" ]
-            , button
                 [ onClick (clickMsg Route.Page5)
                 , class "pt-touch-button"
                 ]
                 [ text "Go Forward" ]
+            , button
+                [ onClick (clickMsg Route.Page3)
+                , class "pt-touch-button"
+                ]
+                [ text "Go back" ]
             ]
         , div
             [ class "pt-page pt-page-4 pt-page-current"
