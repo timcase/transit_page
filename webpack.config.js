@@ -111,6 +111,8 @@ if (MODE === "development") {
             ]
         },
         devServer: {
+          host: '0.0.0.0',
+          disableHostCheck: true,
             inline: true,
             stats: "errors-only",
             contentBase: path.join(__dirname, "src/assets"),
