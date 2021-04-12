@@ -102,16 +102,16 @@ animationClass : Transition -> Attribute msg
 animationClass transition =
     case transition of
         Transition Exit Incoming Forward ->
-            class "pt-page-moveFromRight"
+            class "home-layout-move-from-right"
 
         Transition Exit Outgoing Backward ->
-            class "pt-page-moveToRight"
+            class "home-layout-move-to-right"
 
         Transition Exit Incoming Backward ->
-            class "pt-page-moveFromLeft"
+            class "home-layout-move-from-left"
 
         Transition Exit Outgoing Forward ->
-            class "pt-page-moveToLeft"
+            class "home-layout-move-to-left"
 
         Transition _ _ _ ->
             class ""
