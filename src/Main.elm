@@ -32,6 +32,7 @@ type alias Model =
         , outgoingPage : Maybe Page
         , incomingPage : Maybe Page
         , navKey : Navigation.Key
+        , useTransitions : Bool
         }
 
 
@@ -59,6 +60,7 @@ init flags url navKey =
         , incomingPage = Nothing
         , transition = Transit.empty
         , navKey = navKey
+        , useTransitions = True
         }
 
 
@@ -92,17 +94,13 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         StartTransit page ->
-            Transit.start TransitMsg (SetPage page) ( 600, 600 ) model
+            case model.useTransitions of
+                True ->
+                    Transit.start TransitMsg (SetPage page) ( 600, 600 ) model
 
-        Click page ->
-            ( { model
-                | page = Nothing
-                , incomingPage = Just page
-                , outgoingPage = model.page
-              }
-            , Cmd.none
-            )
-                |> andThen update (StartTransit page)
+                False ->
+                    ( model, Cmd.none )
+                        |> andThen update (SetPage page)
 
         GoTo route ->
             let
