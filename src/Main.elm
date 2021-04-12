@@ -21,19 +21,19 @@ import Page.Page3
 import Page.Page4
 import Page.Page5
 import Page.Page6
-import Transit exposing (Step(..))
+import Transit exposing (Step(..), Transition)
 import Update.Extra exposing (andThen)
 import Url exposing (Url)
 
 
 type alias Model =
-    Transit.WithTransition
-        { page : Maybe Page
-        , outgoingPage : Maybe Page
-        , incomingPage : Maybe Page
-        , navKey : Navigation.Key
-        , useTransitions : Bool
-        }
+    { page : Maybe Page
+    , outgoingPage : Maybe Page
+    , incomingPage : Maybe Page
+    , navKey : Navigation.Key
+    , useTransitions : Bool
+    , transition : Transition
+    }
 
 
 type Msg
