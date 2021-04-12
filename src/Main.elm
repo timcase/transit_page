@@ -173,10 +173,7 @@ view model =
             Transit.getStep model.transition
     in
     div [ class "body" ]
-        [ div [ class "pt-triggers" ]
-            [ text (stepToString (Transit.getStep model.transition))
-            ]
-        , div [ class "pt-perspective", id "pt-main" ]
+        [ div [ class "pt-perspective", id "pt-main" ]
             [ viewPage page step Current None
             , viewPage incomingPage step Incoming (pageDirection incomingPage outgoingPage)
             , viewPage outgoingPage step Outgoing (pageDirection incomingPage outgoingPage)
@@ -203,23 +200,6 @@ main =
         , onUrlChange = Route.match >> SetRoute
         , onUrlRequest = ClickedLink
         }
-
-
-
--- helper
-
-
-stepToString : Step -> String
-stepToString step =
-    case step of
-        Exit ->
-            "Exit"
-
-        Enter ->
-            "Enter"
-
-        Done ->
-            "Done"
 
 
 pageToString : Page -> String
