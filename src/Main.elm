@@ -71,23 +71,64 @@ setRoute maybeRoute model =
             ( model, Cmd.none )
 
         Just Route.Page1 ->
-            ( { model | page = Page1 }, Cmd.none )
+            ( { model
+                | page = Page1
+                , incomingPage = Just Page1
+                , outgoingPage = Just model.page
+              }
+            , Cmd.none
+            )
+                |> andThen update (StartTransit Page1)
 
-        --3
         Just Route.Page2 ->
-            ( { model | page = Page2 }, Cmd.none )
+            ( { model
+                | page = Page2
+                , incomingPage = Just Page2
+                , outgoingPage = Just model.page
+              }
+            , Cmd.none
+            )
+                |> andThen update (StartTransit Page2)
 
         Just Route.Page3 ->
-            ( { model | page = Page3 }, Cmd.none )
+            ( { model
+                | page = Page3
+                , incomingPage = Just Page3
+                , outgoingPage = Just model.page
+              }
+            , Cmd.none
+            )
+                |> andThen update (StartTransit Page3)
 
         Just Route.Page4 ->
-            ( { model | page = Page4 }, Cmd.none )
+            ( { model
+                | page = Page4
+                , incomingPage = Just Page4
+                , outgoingPage = Just model.page
+              }
+            , Cmd.none
+            )
+                |> andThen update (StartTransit Page4)
 
         Just Route.Page5 ->
-            ( { model | page = Page5 }, Cmd.none )
+            ( { model
+                | page = Page5
+                , incomingPage = Just Page5
+                , outgoingPage = Just model.page
+              }
+            , Cmd.none
+            )
+                |> andThen update (StartTransit Page5)
 
         Just Route.Page6 ->
-            ( { model | page = Page6 }, Cmd.none )
+            ( { model
+                | page = Page6
+                , incomingPage = Just Page6
+                , outgoingPage = Just model.page
+              }
+            , Cmd.none
+            )
+                |> andThen update (StartTransit Page6)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -95,7 +136,6 @@ update msg model =
     case msg of
         StartTransit page ->
             case model.useTransitions of
-                --2
                 True ->
                     Transit.start TransitMsg (SetPage page) ( 600, 600 ) model
 
@@ -131,23 +171,10 @@ update msg model =
         GoBack ->
             ( model, Cmd.none )
 
-        --1
         GoTo route ->
-            let
-                page =
-                    routeToPage route
-            in
-            ( { model
-                | incomingPage = Just page
-                , outgoingPage = Just model.page
-              }
-            , Route.newUrl model.navKey route
-            )
-                |> andThen update (StartTransit page)
+            ( model, Route.newUrl model.navKey route )
 
-        --4
         SetPage page ->
-            --loadPage
             ( { model
                 | page = page
                 , incomingPage = Nothing
