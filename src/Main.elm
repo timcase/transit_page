@@ -27,7 +27,7 @@ import Url exposing (Url)
 
 
 type alias Model =
-    { page : Maybe Page
+    { page : Page
     , outgoingPage : Maybe Page
     , incomingPage : Maybe Page
     , navKey : Navigation.Key
@@ -55,7 +55,7 @@ init : Flags -> Url -> Navigation.Key -> ( Model, Cmd Msg )
 init flags url navKey =
     setRoute
         (Route.match url)
-        { page = Just Page1
+        { page = Page1
         , outgoingPage = Nothing
         , incomingPage = Nothing
         , transition = Transit.empty
@@ -71,23 +71,23 @@ setRoute maybeRoute model =
             ( model, Cmd.none )
 
         Just Route.Page1 ->
-            --forward or back
-            ( { model | page = Just Page1 }, Cmd.none )
+            ( { model | page = Page1 }, Cmd.none )
 
+        --3
         Just Route.Page2 ->
-            ( { model | page = Just Page2 }, Cmd.none )
+            ( { model | page = Page2 }, Cmd.none )
 
         Just Route.Page3 ->
-            ( { model | page = Just Page3 }, Cmd.none )
+            ( { model | page = Page3 }, Cmd.none )
 
         Just Route.Page4 ->
-            ( { model | page = Just Page4 }, Cmd.none )
+            ( { model | page = Page4 }, Cmd.none )
 
         Just Route.Page5 ->
-            ( { model | page = Just Page5 }, Cmd.none )
+            ( { model | page = Page5 }, Cmd.none )
 
         Just Route.Page6 ->
-            ( { model | page = Just Page6 }, Cmd.none )
+            ( { model | page = Page6 }, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -95,6 +95,7 @@ update msg model =
     case msg of
         StartTransit page ->
             case model.useTransitions of
+                --2
                 True ->
                     Transit.start TransitMsg (SetPage page) ( 600, 600 ) model
 
@@ -102,23 +103,25 @@ update msg model =
                     ( model, Cmd.none )
                         |> andThen update (SetPage page)
 
+        --1
         GoTo route ->
             let
                 page =
                     routeToPage route
             in
             ( { model
-                | page = Nothing
-                , incomingPage = Just page
-                , outgoingPage = model.page
+                | incomingPage = Just page
+                , outgoingPage = Just model.page
               }
             , Route.newUrl model.navKey route
             )
                 |> andThen update (StartTransit page)
 
+        --4
         SetPage page ->
+            --loadPage
             ( { model
-                | page = Just page
+                | page = page
                 , incomingPage = Nothing
                 , outgoingPage = Nothing
               }
@@ -172,7 +175,7 @@ view model =
     in
     div [ class "body" ]
         [ div [ class "pt-perspective", id "pt-main" ]
-            [ viewPage page step Current None
+            [ viewPage (Just page) step Current None
             , viewPage incomingPage step Incoming (pageDirection incomingPage outgoingPage)
             , viewPage outgoingPage step Outgoing (pageDirection incomingPage outgoingPage)
             ]
