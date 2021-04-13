@@ -103,6 +103,34 @@ update msg model =
                     ( model, Cmd.none )
                         |> andThen update (SetPage page)
 
+        SetRoute maybeRoute ->
+            setRoute maybeRoute model
+
+        ClickedLink urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model, Navigation.pushUrl model.navKey (Url.toString url) )
+
+                Browser.External href ->
+                    case href of
+                        "" ->
+                            ( model, Cmd.none )
+
+                        _ ->
+                            ( model, Navigation.load href )
+
+        Click page ->
+            ( { model
+                | incomingPage = Just page
+                , outgoingPage = Just model.page
+              }
+            , Cmd.none
+            )
+                |> andThen update (StartTransit page)
+
+        GoBack ->
+            ( model, Cmd.none )
+
         --1
         GoTo route ->
             let
@@ -130,9 +158,6 @@ update msg model =
 
         TransitMsg transitMsg ->
             Transit.tick TransitMsg transitMsg model
-
-        _ ->
-            ( model, Cmd.none )
 
 
 viewPage : Maybe Page -> Step -> PageState -> Direction -> Html Msg
