@@ -224,12 +224,15 @@ view model =
 
         step =
             Transit.getStep model.transition
+
+        direction =
+            pageDirection incomingPage outgoingPage
     in
     div [ class "body" ]
         [ div [ class "pt-perspective", id "pt-main" ]
             [ viewPage (Just page) step Current None
-            , viewPage incomingPage step Incoming (pageDirection incomingPage outgoingPage)
-            , viewPage outgoingPage step Outgoing (pageDirection incomingPage outgoingPage)
+            , viewPage incomingPage step Incoming direction
+            , viewPage outgoingPage step Outgoing direction
             ]
         ]
 
