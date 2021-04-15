@@ -38,11 +38,11 @@ type alias Model =
 
 type Msg
     = Click Page
-    | SetPage Page
+    | SetPage
     | TransitMsg (Transit.Msg Msg)
     | ClickedLink UrlRequest
     | SetRoute (Maybe Route)
-    | StartTransit Page
+    | StartTransit
     | GoTo Route
     | GoBack
 
@@ -78,7 +78,6 @@ setRoute maybeRoute model =
               }
             , Cmd.none
             )
-                |> andThen update (StartTransit Page1)
 
         Just Route.Page2 ->
             ( { model
@@ -88,7 +87,6 @@ setRoute maybeRoute model =
               }
             , Cmd.none
             )
-                |> andThen update (StartTransit Page2)
 
         Just Route.Page3 ->
             ( { model
@@ -98,7 +96,6 @@ setRoute maybeRoute model =
               }
             , Cmd.none
             )
-                |> andThen update (StartTransit Page3)
 
         Just Route.Page4 ->
             ( { model
@@ -108,7 +105,6 @@ setRoute maybeRoute model =
               }
             , Cmd.none
             )
-                |> andThen update (StartTransit Page4)
 
         Just Route.Page5 ->
             ( { model
@@ -118,7 +114,6 @@ setRoute maybeRoute model =
               }
             , Cmd.none
             )
-                |> andThen update (StartTransit Page5)
 
         Just Route.Page6 ->
             ( { model
@@ -128,23 +123,23 @@ setRoute maybeRoute model =
               }
             , Cmd.none
             )
-                |> andThen update (StartTransit Page6)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        StartTransit page ->
+        StartTransit ->
             case model.useTransitions of
                 True ->
-                    Transit.start TransitMsg (SetPage page) ( 600, 600 ) model
+                    Transit.start TransitMsg SetPage ( 600, 600 ) model
 
                 False ->
                     ( model, Cmd.none )
-                        |> andThen update (SetPage page)
+                        |> andThen update SetPage
 
         SetRoute maybeRoute ->
             setRoute maybeRoute model
+                |> andThen update StartTransit
 
         ClickedLink urlRequest ->
             case urlRequest of
@@ -166,7 +161,7 @@ update msg model =
               }
             , Cmd.none
             )
-                |> andThen update (StartTransit page)
+                |> andThen update StartTransit
 
         GoBack ->
             ( model, Cmd.none )
@@ -174,10 +169,9 @@ update msg model =
         GoTo route ->
             ( model, Route.newUrl model.navKey route )
 
-        SetPage page ->
+        SetPage ->
             ( { model
-                | page = page
-                , incomingPage = Nothing
+                | incomingPage = Nothing
                 , outgoingPage = Nothing
               }
             , Cmd.none
